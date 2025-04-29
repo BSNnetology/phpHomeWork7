@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>"PHP. Домашнее задание 7.2: обрабатываем HTML-форму"</title>   
+    </head>
+    <!-- ======================================= -->
+    <body>
+        <div style="width: 500px; margin-left: auto; margin-right: auto; 
+            margin-top: 10px; padding: 5px; padding-bottom: 15px; background-color:Gainsboro;"> 
+
+            <h2 style="width: 100%; text-align: center;">Оправка файла на сервер...</h2>
+
+            <form enctype="multipart/form-data" action="upload.php" method="POST">
+                
+                <input style="width: 100%;" type="file" name="content" />
+                <br/>                
+                <label style="display: block; width: 100%;">
+                    <span >Новое имя файла: </span>
+                    <input style="margin-top: 15px; margin-bottom: 15px; width: calc(100% - 150px); " 
+                    type="text" name="file_name" placeholder="Имя не выбрано" />
+                </label>
+
+                <p id="result"; style="width: 100%; text-align: center;">Текст строки состояния по-умолчанию</p>
+
+                <input style="display: flex; margin: 0 auto; background-color: Maroon; 
+                color: White;" type="submit" value="Отправить файл на сервер" />
+
+                
+            </form>
+        </div>
+        
+        <!-- ======================================= -->
+        <script>
+            window.addEventListener('load', function () {
+
+                // -- Текст строки состояния по-умолчанию
+                let deftext = "Выберите файл для отправки на сервер, укажите имя для сохранния и нажмите кнопку \"Отправить файл\"";
+                
+                // -- Найдем элемент со строкой статуса (result)
+                let eResult = document.getElementById("result");
+                
+                // -- Получим Get параметр от сервера PHP
+                let urlGetString = window.location.search;
+
+                // -- Если параметр не передан или элемент result не найден, установим текст по умолчанию
+                if (!urlGetString || !eResult) {
+                    eResult.innerText = deftext;
+                    return;
+                }
+
+                // -- Разберем результат Get 
+                eResult.style.color = 'Red';
+                let paramList = new URLSearchParams(urlGetString);
+                
+                // -- Найдем параметр res (строка результата)
+                let resStr = paramList.get('res'); 
+
+                // -- Если параметр res отсутсвует, формат ответа неверный
+                if (!resStr) {
+                    eResult.innerText = "Ошибка сервера\nНекорректный формат ответа...";
+                } 
+                // -- Если параметр res содержит подстроку об успехе
+                else if (resStr.startsWith("Файл успешно сохранен")) {
+                    eResult.style.color = 'DarkGreen';
+                    eResult.innerText = resStr.trim().replace("|||", "\n");
+                }
+                // -- Иначе - сообщиnь об ошибке
+                else {
+                    eResult.innerText = "Ошибка выполнения операции:\n" + resStr.trim();
+                }
+
+                // -- Очистим строку Get параметров
+                let baseUrl = window.location.href.split("?")[0];
+                window.history.pushState('name', '', baseUrl);
+            })
+
+        </script>
+    </body>
+</html>
