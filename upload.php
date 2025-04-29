@@ -4,12 +4,12 @@
     
     // -- Проверим, передан ли файл, или вернем ошибку
     if ($_FILES['content']['size'] === 0) {
-        sendresult('Файл для сохранения не выбран');
+        sendResult('Файл для сохранения не выбран');
     }
 
     // -- Проверим, передано ли имя сохранения, или вернем ошибку
     if (empty($_POST['file_name'])) {
-        sendresult('Имя для сохранения файла не выбрано');
+        sendResult('Имя для сохранения файла не выбрано');
     }
     
     // -- Установим папку - приемник файлов
@@ -28,15 +28,15 @@
     $uploadFile = $_POST['file_name'] . ($sourceEx === $receptEx ? '' : ('.' . $sourceEx));
     
     if (file_exists(filename: $uploadDir . $uploadFile)) {
-        sendresult('Файл "' . $uploadFile . '" уже существует...');
+        sendResult('Файл "' . $uploadFile . '" уже существует...');
     } elseif (move_uploaded_file($_FILES['content']['tmp_name'],$uploadDir . $uploadFile)) {
-        sendresult('Файл успешно сохранен:|||' . $uploadDir . $uploadFile);
+        sendResult('Файл успешно сохранен:|||' . $uploadDir . $uploadFile);
     } else {
-        sendresult('Не удалось сохранить файл: ' . $uploadFile);
+        sendResult('Не удалось сохранить файл: ' . $uploadFile);
     }
     
     /* ----------- Перейдем на исходную страницу с возвратом ответа Get --------- */
-    function sendresult(string $result): void {
+    function sendResult(string $result): void {
         header("Location: " . $_SERVER["HTTP_REFERER"] . '?res=' . $result);
         exit;
     }
